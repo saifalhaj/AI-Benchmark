@@ -1,0 +1,25 @@
+name: Update benchmarks
+on:
+  schedule:
+    - cron: '0 6 * * *'    # daily 06:00 UTC
+  workflow_dispatch:        # manual run button
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npx tsx scripts/update.ts
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - run: |
+          git config user.name "benchmark-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: daily benchmark refresh" || exit 0
+          git push
