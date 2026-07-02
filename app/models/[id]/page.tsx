@@ -51,8 +51,8 @@ export default async function ModelPage({
   return (
     <div>
       <nav className="mb-6 text-2xs text-faint">
-        <Link href="/table" className="hover:text-muted">
-          Table
+        <Link href="/explore" className="hover:text-muted">
+          Explore
         </Link>{" "}
         <span aria-hidden>/</span> {model.name}
       </nav>

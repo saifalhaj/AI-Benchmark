@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { CategoryTile } from "@/components/CategoryTile";
+import { ScoreMatrix } from "@/components/viz/ScoreMatrix";
+import { CategoryFingerprints } from "@/components/viz/CategoryFingerprints";
 import {
   meta,
   benchmarks,
   models,
   byCategory,
   leaderFor,
-  formatScore,
 } from "@/lib/data";
 
 // Count rank-1 finishes per model — the quantified thesis: no single model
@@ -24,7 +24,7 @@ function winsByModel() {
   return [...wins.values()].sort((a, b) => b.count - a.count);
 }
 
-export default function OverviewPage() {
+export default function AtlasPage() {
   const wins = winsByModel();
   const maxWins = Math.max(...wins.map((w) => w.count), 1);
   const groups = byCategory();
@@ -44,16 +44,16 @@ export default function OverviewPage() {
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
-            href="/benchmarks"
+            href="/trust"
             className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-bg transition-colors hover:bg-accent-dim"
           >
-            Browse benchmarks
+            See the trust layer
           </Link>
           <Link
-            href="/table"
+            href="/explore"
             className="rounded-md border border-line px-4 py-2 text-sm font-medium text-fg transition-colors hover:border-line-strong"
           >
-            Open master table
+            Explore the data
           </Link>
         </div>
 
@@ -74,16 +74,25 @@ export default function OverviewPage() {
         </dl>
       </section>
 
-      {/* Signature: leader-count spread across models */}
+      {/* Signature: the whole field in one matrix */}
       <section>
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-semibold text-fg">Who leads where</h2>
-            <p className="mt-1 text-xs text-muted">
-              Rank-1 finishes across {benchmarks.length} benchmarks. The spread is the point.
-            </p>
-          </div>
+        <h2 className="text-lg font-semibold text-fg">The whole field at once</h2>
+        <p className="mt-1 max-w-2xl text-xs text-muted">
+          Every score on the site in one matrix. Color intensity is relative
+          within each row, so each benchmark sets its own scale. Click a model
+          to isolate its column; hover any cell for the full record.
+        </p>
+        <div className="mt-5">
+          <ScoreMatrix />
         </div>
+      </section>
+
+      {/* Who leads where */}
+      <section>
+        <h2 className="text-lg font-semibold text-fg">Who leads where</h2>
+        <p className="mt-1 text-xs text-muted">
+          Rank-1 finishes across {benchmarks.length} benchmarks. The spread is the point.
+        </p>
         <div className="mt-5 space-y-2.5">
           {wins.map((w) => (
             <div key={w.name} className="flex items-center gap-3">
@@ -107,37 +116,27 @@ export default function OverviewPage() {
         </div>
       </section>
 
-      {/* Category tiles */}
+      {/* Capability fingerprints */}
       <section>
-        <h2 className="text-lg font-semibold text-fg">Categories</h2>
-        <p className="mt-1 text-xs text-muted">
-          Each tile shows the top benchmarks and their current leaders.
+        <h2 className="text-lg font-semibold text-fg">Every model has a shape</h2>
+        <p className="mt-1 max-w-2xl text-xs text-muted">
+          Capability fingerprints across all nine categories, normalized within
+          each benchmark. Two models with similar averages can have very
+          different shapes.
         </p>
-        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {groups.map((g) => (
-            <CategoryTile
-              key={g.category}
-              category={g.category}
-              benchmarks={g.benchmarks}
-            />
-          ))}
+        <div className="mt-5">
+          <CategoryFingerprints />
         </div>
       </section>
 
-      {/* Live data sources — scraped daily by the refresh job */}
+      {/* Sources */}
       <section>
-        <div className="flex flex-wrap items-center gap-3">
-          <h2 className="text-lg font-semibold text-fg">Live data sources</h2>
-          <span className="inline-flex items-center gap-1.5 rounded border border-ok/40 bg-ok-soft px-1.5 py-0.5 text-2xs font-medium uppercase tracking-wide text-ok">
-            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-ok" />
-            Scraped daily
-          </span>
-        </div>
+        <h2 className="text-lg font-semibold text-fg">Sources</h2>
         <p className="mt-1 max-w-2xl text-xs text-muted">
-          The daily refresh fetches these leaderboards and parses fresh scores
-          into the table. Numbers here update on their own.
+          Scraped sources feed the numbers daily. Referenced leaderboards are
+          linked, never re-ranked into a false consensus.
         </p>
-        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {meta.dataSources.map((a) => (
             <a
               key={a.name}
@@ -146,25 +145,16 @@ export default function OverviewPage() {
               rel="noopener noreferrer"
               className="rounded-lg border border-line bg-surface p-4 transition-colors hover:border-line-strong hover:bg-elevated"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <span className="text-sm font-medium text-fg">{a.name}</span>
-                <span className="text-2xs text-accent">↗</span>
+                <span className="inline-flex items-center gap-1.5 rounded border border-ok/40 bg-ok-soft px-1.5 py-0.5 text-2xs font-medium uppercase tracking-wide text-ok">
+                  <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-ok" />
+                  Scraped daily
+                </span>
               </div>
               <p className="mt-2 text-2xs leading-relaxed text-muted">{a.measures}</p>
             </a>
           ))}
-        </div>
-      </section>
-
-      {/* Referenced leaderboards — link out only, never scraped or re-ranked */}
-      <section>
-        <h2 className="text-lg font-semibold text-fg">Referenced leaderboards</h2>
-        <p className="mt-1 max-w-2xl text-xs text-muted">
-          We link these rather than pulling their numbers in. Their rankings use
-          scaffolds and scoring we would only distort by re-ranking, so read them
-          at the source.
-        </p>
-        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
           {meta.linkOuts.map((a) => (
             <a
               key={a.name}
@@ -173,9 +163,11 @@ export default function OverviewPage() {
               rel="noopener noreferrer"
               className="rounded-lg border border-line bg-surface p-4 transition-colors hover:border-line-strong hover:bg-elevated"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <span className="text-sm font-medium text-fg">{a.name}</span>
-                <span className="text-2xs text-faint">↗</span>
+                <span className="rounded border border-line-strong bg-elevated px-1.5 py-0.5 text-2xs font-medium uppercase tracking-wide text-muted">
+                  Linked only
+                </span>
               </div>
               <p className="mt-2 text-2xs leading-relaxed text-muted">{a.measures}</p>
             </a>

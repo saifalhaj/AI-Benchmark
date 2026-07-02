@@ -23,11 +23,13 @@ No user-facing AI calls. No chart library — lightweight CSS/SVG bars only.
 
 | Route | What |
 |---|---|
-| `/` | Overview: the honest caveat, leader spread, category tiles, live sources + referenced leaderboards |
-| `/benchmarks` | Card per benchmark with every trust flag; filter to the honest view |
+| `/` | **Atlas**: score matrix heatmap of every score, leader spread, capability fingerprints, sources |
+| `/trust` | **Trust**: human-vs-AI reality gap chart, trust census waffle, flag glossary |
+| `/explore` | **Explore**: benchmark cards (honest-view filter) or the full sortable master table |
 | `/models/[id]` | One model across every benchmark, with source tags |
-| `/table` | Master table: every score row, sortable by any column, global filter |
-| `/methodology` | Plain-English glossary of each flag and why aggregators disagree |
+
+Old routes (`/benchmarks`, `/table`, `/methodology`) permanently redirect into
+the three tabs.
 
 ## Local development
 

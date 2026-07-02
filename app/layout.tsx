@@ -37,8 +37,8 @@ export default function RootLayout({
             <p>
               Static dashboard. No key needed to view. Scores refresh daily from
               source leaderboards; see{" "}
-              <a href="/methodology" className="text-muted hover:text-fg">
-                Methodology
+              <a href="/trust" className="text-muted hover:text-fg">
+                Trust
               </a>{" "}
               for how flags are assigned.
             </p>

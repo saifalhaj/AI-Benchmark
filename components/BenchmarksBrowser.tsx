@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { benchmarks } from "@/lib/data";
 import { CATEGORIES } from "@/lib/types";
 import { BenchmarkCard } from "@/components/BenchmarkCard";
@@ -12,16 +11,7 @@ import {
 } from "@/components/Filters";
 
 export function BenchmarksBrowser() {
-  // Deep-link category via ?category= (set by the overview tiles). Read on the
-  // client so the page stays statically prerendered.
-  const params = useSearchParams();
-  const raw = params.get("category") ?? "";
-  const initialCategory = (CATEGORIES as string[]).includes(raw) ? raw : "";
-
-  const [filters, setFilters] = useState<BenchmarkFilterState>({
-    ...DEFAULT_FILTERS,
-    category: initialCategory,
-  });
+  const [filters, setFilters] = useState<BenchmarkFilterState>(DEFAULT_FILTERS);
 
   const results = useMemo(
     () =>
