@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/Reveal";
 import { CATEGORIES } from "@/lib/types";
 import type { Category } from "@/lib/types";
 import {
@@ -137,12 +138,13 @@ export function CategoryFingerprints() {
     .sort((a, b) => b.wins - a.wins || a.model.name.localeCompare(b.model.name));
 
   return (
-    <div>
+    <Reveal>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {cards.map(({ model, wins: w, strengths }) => (
+        {cards.map(({ model, wins: w, strengths }, i) => (
           <div
             key={model.id}
-            className="flex flex-col items-center rounded-lg border border-line bg-surface p-4"
+            className="pop flex flex-col items-center rounded-lg border border-line bg-surface p-4"
+            style={{ "--rv-delay": `${Math.min(i * 60, 480)}ms` } as React.CSSProperties}
           >
             <Radar name={model.name} strengths={strengths} />
             <div className="mt-2 text-center">
@@ -155,7 +157,14 @@ export function CategoryFingerprints() {
           </div>
         ))}
       </div>
-      <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-2xs text-faint">
+      <div
+        className="rv mt-3 flex flex-wrap gap-x-3 gap-y-1 text-2xs text-faint"
+        style={
+          {
+            "--rv-delay": `${Math.min((cards.length - 1) * 60 + 80, 560)}ms`,
+          } as React.CSSProperties
+        }
+      >
         {CODES.map((code, i) => (
           <span key={code}>
             <span className="font-mono">{code}</span>: {CATEGORIES[i]}
@@ -168,6 +177,6 @@ export function CategoryFingerprints() {
           hollow tip: no data in category
         </span>
       </div>
-    </div>
+    </Reveal>
   );
 }

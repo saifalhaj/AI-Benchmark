@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { CountUp } from "@/components/CountUp";
+import { Reveal } from "@/components/Reveal";
 import { benchmarks, scores } from "@/lib/data";
 import type { Benchmark } from "@/lib/types";
 
@@ -44,7 +46,7 @@ export function TrustCensus() {
   ).length;
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
+    <Reveal className="grid gap-6 lg:grid-cols-2">
       {/* Part A: one tile per benchmark, colored by worst standing */}
       <div>
         <h3 className="mb-2 text-2xs font-medium uppercase tracking-wide text-faint">
@@ -55,7 +57,7 @@ export function TrustCensus() {
           role="img"
           aria-label={`${total} benchmarks colored by their worst trust flag`}
         >
-          {benchmarks.map((b) => {
+          {benchmarks.map((b, i) => {
             const meta = STANDING_META[standingOf(b)];
             const flagText = b.flags.length ? b.flags.join(", ") : "no flags";
             return (
@@ -64,7 +66,8 @@ export function TrustCensus() {
                 title={`${b.name}: ${flagText}`}
                 role="img"
                 aria-label={`${b.name}: ${flagText}`}
-                className={`flex aspect-square items-center justify-center rounded ${meta.tile}`}
+                className={`pop flex aspect-square items-center justify-center rounded ${meta.tile}`}
+                style={{ "--rv-delay": `${Math.min(i * 14, 400)}ms` } as React.CSSProperties}
               >
                 <span aria-hidden className="text-[10px] font-medium leading-none text-bg">
                   {meta.glyph}
@@ -73,7 +76,7 @@ export function TrustCensus() {
             );
           })}
         </div>
-        <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
+        <ul className="rv mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
           {STANDING_ORDER.map((s) => {
             const meta = STANDING_META[s];
             return (
@@ -103,10 +106,10 @@ export function TrustCensus() {
             role="img"
             aria-label={`${independent} of ${scores.length} scores independently run, ${vendor} vendor-reported`}
           >
-            <div className="bg-ok/70" style={{ width: `${indPct}%` }} />
+            <div className="grow-x bg-ok/70" style={{ width: `${indPct}%` }} />
             <div className="flex-1 bg-line-strong" />
           </div>
-          <div className="mt-1.5 flex justify-between text-2xs">
+          <div className="rv mt-1.5 flex justify-between text-2xs">
             <span className="tnum font-mono text-ok">
               {independent} independent ({indPct}%)
             </span>
@@ -119,7 +122,7 @@ export function TrustCensus() {
         {/* Part C: the honest number */}
         <div className="rounded-lg border border-line bg-surface p-4">
           <div className="tnum font-mono text-4xl text-fg">
-            {honest}
+            <CountUp value={honest} />
             <span className="text-lg text-faint"> / {total}</span>
           </div>
           <div className="mt-1 text-sm font-medium text-fg">survive the honest view</div>
@@ -129,12 +132,12 @@ export function TrustCensus() {
           </p>
           <Link
             href="/explore"
-            className="mt-3 inline-block rounded text-2xs font-medium text-accent hover:text-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+            className="press mt-3 inline-block rounded text-2xs font-medium text-accent hover:text-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
           >
             Explore the full picture &rarr;
           </Link>
         </div>
       </div>
-    </div>
+    </Reveal>
   );
 }

@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "AI Agent Benchmark Dashboard",
-    "caveat": "No single model wins everything. Scores swing with the harness, the scaffold, and who is reporting them. This dashboard keeps that disagreement visible instead of averaging it away.",
+    "caveat": "Scores swing with the harness, the scaffold, and who reports them. This dashboard keeps the disagreement visible instead of averaging it away.",
     "lastUpdated": "2026-01-20",
     "dataSources": [
       {

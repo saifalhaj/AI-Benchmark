@@ -9,7 +9,7 @@ export function BenchmarkCard({ benchmark }: { benchmark: Benchmark }) {
   const showBars = top ? isPercent(top.score) : false;
 
   return (
-    <article className="flex flex-col rounded-lg border border-line bg-surface p-5">
+    <article className="flex flex-col rounded-lg border border-line bg-surface p-5 transition-[transform,border-color] duration-200 hover:-translate-y-0.5 hover:border-line-strong">
       <header className="flex items-start justify-between gap-4">
         <div>
           <p className="text-2xs font-mono uppercase tracking-wide text-faint">

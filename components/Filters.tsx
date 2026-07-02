@@ -40,7 +40,7 @@ function Toggle({
       aria-checked={checked}
       title={title}
       onClick={() => onChange(!checked)}
-      className={`inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
+      className={`press inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
         checked ? active : "border-line bg-surface text-muted hover:border-line-strong"
       }`}
     >
@@ -139,7 +139,7 @@ export function Filters({
             <button
               type="button"
               onClick={() => onChange(DEFAULT_FILTERS)}
-              className="text-2xs text-muted underline-offset-2 hover:text-fg hover:underline"
+              className="press text-2xs text-muted underline-offset-2 hover:text-fg hover:underline"
             >
               Reset
             </button>

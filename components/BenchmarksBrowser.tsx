@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { benchmarks } from "@/lib/data";
 import { CATEGORIES } from "@/lib/types";
 import { BenchmarkCard } from "@/components/BenchmarkCard";
+import { Reveal } from "@/components/Reveal";
 import {
   Filters,
   DEFAULT_FILTERS,
@@ -50,11 +51,19 @@ export function BenchmarksBrowser() {
           </button>
         </div>
       ) : (
-        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {results.map((b) => (
-            <BenchmarkCard key={b.id} benchmark={b} />
-          ))}
-        </div>
+        <Reveal>
+          <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {results.map((b, i) => (
+              <div
+                key={b.id}
+                className="pop h-full [&>article]:h-full"
+                style={{ "--rv-delay": `${(i % 9) * 40}ms` } as React.CSSProperties}
+              >
+                <BenchmarkCard benchmark={b} />
+              </div>
+            ))}
+          </div>
+        </Reveal>
       )}
     </div>
   );

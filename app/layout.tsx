@@ -20,8 +20,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+    <html
+      lang="en"
+      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      suppressHydrationWarning
+    >
       <body className="min-h-[100dvh]">
+        {/* gate reveal-hidden states on JS being present; runs before paint */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.classList.add('js')",
+          }}
+        />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-elevated focus:px-3 focus:py-2 focus:text-xs focus:text-fg"
@@ -33,16 +43,15 @@ export default function RootLayout({
           {children}
         </main>
         <footer className="mx-auto max-w-grid px-4 pb-10 pt-6">
-          <div className="border-t border-line pt-6 text-2xs text-faint">
+          <div className="flex flex-wrap items-baseline justify-between gap-2 border-t border-line pt-5 text-2xs text-faint">
             <p>
-              Static dashboard. No key needed to view. Scores refresh daily from
-              source leaderboards; see{" "}
+              Static site, no key to view. Flags explained in{" "}
               <a href="/trust" className="text-muted hover:text-fg">
                 Trust
-              </a>{" "}
-              for how flags are assigned.
+              </a>
+              .
             </p>
-            <p className="tnum mt-1 font-mono">Data last updated {meta.lastUpdated}</p>
+            <p className="tnum font-mono">updated {meta.lastUpdated}</p>
           </div>
         </footer>
       </body>

@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/Reveal";
 import { benchmarks, leaderFor } from "@/lib/data";
 
 // Dumbbell chart: human expert baseline (hollow) vs best AI score (filled)
@@ -42,7 +43,8 @@ const signed = (d: number) => (d >= 0 ? `+${d.toFixed(1)}` : d.toFixed(1));
 
 export function RealityGap() {
   return (
-    <section className="rounded-lg border border-line bg-surface p-4">
+    <Reveal>
+      <section className="rounded-lg border border-line bg-surface p-4">
       <div className="overflow-x-auto">
         <svg
           viewBox={`0 0 ${W} ${H}`}
@@ -83,7 +85,11 @@ export function RealityGap() {
             const lo = Math.min(xH, xA);
             const hi = Math.max(xH, xA);
             return (
-              <g key={r.name}>
+              <g
+                key={r.name}
+                className="fade"
+                style={{ "--rv-delay": `${i * 90}ms` } as React.CSSProperties}
+              >
                 <title>
                   {`${r.name}: human ${r.human.toFixed(1)}%, best AI (${r.model}) ${r.ai.toFixed(1)}%, delta ${signed(d)} pts`}
                 </title>
@@ -140,7 +146,7 @@ export function RealityGap() {
         </svg>
       </div>
 
-      <p className="mt-2 text-2xs text-muted">
+      <p className="rv mt-2 text-2xs text-muted">
         <span aria-hidden>○</span> hollow, H = human expert baseline
         <span className="mx-2 text-faint">·</span>
         <span aria-hidden className="text-accent">●</span> filled = best AI
@@ -148,6 +154,7 @@ export function RealityGap() {
         <span className="mx-2 text-faint">·</span>
         delta = AI minus human, percentage points
       </p>
-    </section>
+      </section>
+    </Reveal>
   );
 }

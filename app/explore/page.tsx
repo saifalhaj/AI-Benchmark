@@ -11,10 +11,17 @@ export default function ExplorePage() {
   return (
     <div>
       <div className="mb-4">
-        <h1 className="text-2xl font-semibold tracking-tight text-fg">Explore the data</h1>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
-          The raw material behind the charts. Benchmark cards carry every trust
-          flag; the master table holds every score row, sortable by any column.
+        <h1
+          className="load-in text-2xl font-semibold tracking-tight text-fg"
+          style={{ "--d": "0ms" } as React.CSSProperties}
+        >
+          Explore the data
+        </h1>
+        <p
+          className="load-in mt-1 text-sm text-muted"
+          style={{ "--d": "60ms" } as React.CSSProperties}
+        >
+          The raw material behind the charts.
         </p>
       </div>
       <ExploreBrowser />

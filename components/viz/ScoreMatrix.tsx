@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { Reveal } from "@/components/Reveal";
 import type { Benchmark, Flag, Model, Score } from "@/lib/types";
 import { byCategory, formatScore, scoredModels, scoresForBenchmark } from "@/lib/data";
 
@@ -44,6 +45,18 @@ const GROUPS = byCategory().map((g) => ({
   category: g.category,
   rows: g.benchmarks.map(buildRow),
 }));
+
+// Overall reveal order: category bands and benchmark rows in render sequence.
+const SEQ = new Map<string, number>();
+{
+  let i = 0;
+  for (const g of GROUPS) {
+    SEQ.set(`cat:${g.category}`, i++);
+    for (const r of g.rows) SEQ.set(r.benchmark.id, i++);
+  }
+}
+const rvDelay = (i: number) =>
+  ({ "--rv-delay": `${Math.min(i * 18, 500)}ms` }) as React.CSSProperties;
 
 // Same glyph vocabulary as TrustBadge: ！ danger, △ warn, ✓ ok.
 const FLAG_GLYPHS: { flag: Flag; glyph: string; cls: string; label: string }[] = [
@@ -105,7 +118,7 @@ export function ScoreMatrix() {
   };
 
   return (
-    <div className="rounded-lg border border-line bg-surface">
+    <Reveal className="rounded-lg border border-line bg-surface">
       <div
         ref={scrollRef}
         className="overflow-x-auto"
@@ -132,7 +145,7 @@ export function ScoreMatrix() {
                     ? `Clear focus on ${m.name}`
                     : `Focus ${m.name}: dims all other columns`
                 }
-                className={`rounded px-0.5 text-2xs font-medium leading-tight focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent ${
+                className={`press rounded px-0.5 text-2xs font-medium leading-tight focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent ${
                   focus === m.id ? "text-accent" : "text-muted hover:text-fg"
                 }`}
               >
@@ -153,8 +166,8 @@ export function ScoreMatrix() {
             <div key={g.category} className="contents">
               {/* category band spans all columns */}
               <div
-                className="border-t border-line bg-elevated/60 py-1"
-                style={{ gridColumn: "1 / -1" }}
+                className="rv border-t border-line bg-elevated/60 py-1"
+                style={{ gridColumn: "1 / -1", ...rvDelay(SEQ.get(`cat:${g.category}`) ?? 0) }}
               >
                 <span className="sticky left-0 inline-block px-2 font-mono text-2xs uppercase tracking-wide text-faint">
                   {g.category}
@@ -163,7 +176,10 @@ export function ScoreMatrix() {
 
               {g.rows.map((row) => (
                 <div key={row.benchmark.id} className="contents">
-                  <div className="sticky left-0 z-10 flex min-w-0 items-center border-b border-line bg-surface px-2 py-1">
+                  <div
+                    className="rv sticky left-0 z-10 flex min-w-0 items-center border-b border-line bg-surface px-2 py-1"
+                    style={rvDelay(SEQ.get(row.benchmark.id) ?? 0)}
+                  >
                     <span
                       className="truncate text-2xs text-fg"
                       title={row.benchmark.name}
@@ -191,7 +207,13 @@ export function ScoreMatrix() {
                           title={`${row.benchmark.name}, ${m.name}: no score`}
                           className={`flex h-8 items-center justify-center border-b border-l border-line bg-surface transition-opacity duration-200 ${dim}`}
                         >
-                          <span aria-hidden className="text-2xs text-faint/60">
+                          {/* reveal lives on the content, not the cell: .in .rv would
+                              out-specificity the focus-dimming opacity utility */}
+                          <span
+                            aria-hidden
+                            className="fade text-2xs text-faint/60"
+                            style={rvDelay(SEQ.get(row.benchmark.id) ?? 0)}
+                          >
                             ·
                           </span>
                         </div>
@@ -209,21 +231,26 @@ export function ScoreMatrix() {
                         }`}
                       >
                         <div
-                          aria-hidden
-                          className="absolute inset-0 bg-accent"
-                          style={{ opacity: cell.alpha }}
-                        />
-                        {leader && (
-                          <span
+                          className="fade absolute inset-0 flex items-center justify-center"
+                          style={rvDelay(SEQ.get(row.benchmark.id) ?? 0)}
+                        >
+                          <div
                             aria-hidden
-                            className="absolute right-0.5 top-0.5 font-mono text-[8px] leading-none text-fg"
-                          >
-                            1
+                            className="absolute inset-0 bg-accent"
+                            style={{ opacity: cell.alpha }}
+                          />
+                          {leader && (
+                            <span
+                              aria-hidden
+                              className="absolute right-0.5 top-0.5 font-mono text-[8px] leading-none text-fg"
+                            >
+                              1
+                            </span>
+                          )}
+                          <span className="tnum relative hidden font-mono text-2xs text-fg sm:block">
+                            {formatScore(cell.score.score)}
                           </span>
-                        )}
-                        <span className="tnum relative hidden font-mono text-2xs text-fg sm:block">
-                          {formatScore(cell.score.score)}
-                        </span>
+                        </div>
                       </div>
                     );
                   })}
@@ -262,7 +289,10 @@ export function ScoreMatrix() {
       </div>
 
       {/* legend */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-line px-3 py-2 text-2xs text-muted">
+      <div
+        className="rv flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-line px-3 py-2 text-2xs text-muted"
+        style={{ "--rv-delay": "520ms" } as React.CSSProperties}
+      >
         <span className="inline-flex items-center gap-1">
           <span className="inline-flex overflow-hidden rounded-sm border border-line">
             {[0.15, 0.55, 0.95].map((o) => (
@@ -297,6 +327,6 @@ export function ScoreMatrix() {
         </span>
         <span className="font-mono text-faint">elo = rating, not %</span>
       </div>
-    </div>
+    </Reveal>
   );
 }

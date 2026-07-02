@@ -49,6 +49,70 @@
   }
 }
 
+/* --- Motion system ------------------------------------------------------
+   Load-in: pure CSS, runs on page load (safe without JS).
+   Scroll-reveal: <Reveal> adds .in when the block enters the viewport.
+   Initial hidden states are gated on html.js so no-JS/SEO always sees
+   final state. Only opacity + transform are ever animated. */
+@layer utilities {
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .load-in {
+    animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--d, 0ms);
+  }
+
+  html.js .rv {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  html.js .pop {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  html.js .grow-x {
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+  html.js .fade {
+    opacity: 0;
+  }
+  html.js .rv,
+  html.js .pop,
+  html.js .grow-x,
+  html.js .fade {
+    transition:
+      opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--rv-delay, 0ms);
+  }
+  html.js .in .rv,
+  html.js .in .pop {
+    opacity: 1;
+    transform: none;
+  }
+  html.js .in .grow-x {
+    transform: scaleX(1);
+  }
+  html.js .in .fade {
+    opacity: 1;
+  }
+
+  /* tactile press feedback on interactive elements */
+  .press:active {
+    transform: translateY(1px) scale(0.99);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -56,5 +120,13 @@
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+  /* reveals show final state immediately, no waiting on the observer */
+  html.js .rv,
+  html.js .pop,
+  html.js .grow-x,
+  html.js .fade {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

@@ -30,7 +30,7 @@ export function ExploreBrowser() {
             role="tab"
             aria-selected={view === t.key}
             onClick={() => setView(t.key)}
-            className={`rounded px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={`press rounded px-3 py-1.5 text-xs font-medium transition-colors ${
               view === t.key
                 ? "bg-elevated text-fg"
                 : "text-muted hover:text-fg"
