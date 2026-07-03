@@ -42,15 +42,6 @@ const config: Config = {
       maxWidth: {
         grid: "1400px",
       },
-      keyframes: {
-        "fade-up": {
-          "0%": { opacity: "0", transform: "translateY(6px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-      },
-      animation: {
-        "fade-up": "fade-up 0.4s cubic-bezier(0.16,1,0.3,1) both",
-      },
     },
   },
   plugins: [],
